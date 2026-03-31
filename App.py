@@ -109,3 +109,30 @@ def get_correlation(stock1, stock2):
 
     return df['S1_return'].corr(df['S2_return'])
 
+@app.get("/top-movers")
+def top_movers():
+    results = []
+
+    for stock in companies:
+        df = get_stock_data(stock)
+
+        if df.empty:
+            continue
+
+        latest = df.iloc[-1]
+
+        results.append({
+            "symbol": stock,
+            "daily_return": float(latest["Daily Return"])
+        })
+
+    if not results:
+        return {"error": "No data available"}
+
+    # sort by return
+    sorted_data = sorted(results, key=lambda x: x["daily_return"], reverse=True)
+
+    return {
+        "top_gainer": sorted_data[0],
+        "top_loser": sorted_data[-1]
+    }

@@ -107,3 +107,26 @@ canvas {
 .sidebar li.active {
     background: #2563eb;
 }
+
+.insights {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.card {
+    flex: 1;
+    padding: 15px;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    font-weight: bold;
+}
+
+#gainer {
+    border-left: 5px solid green;
+}
+
+#loser {
+    border-left: 5px solid red;
+}

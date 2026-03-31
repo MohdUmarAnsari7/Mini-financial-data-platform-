@@ -170,5 +170,18 @@ function drawCompareChart(labels, data1, data2, s1, s2) {
     });
 }
 
+async function loadInsights() {
+    const res = await fetch("http://127.0.0.1:8000/top-movers");
+    const data = await res.json();
+
+    if (data.error) return;
+
+    document.getElementById("gainer").innerText =
+        `📈 Top Gainer: ${data.top_gainer.symbol} (${(data.top_gainer.daily_return * 100).toFixed(2)}%)`;
+
+    document.getElementById("loser").innerText =
+        `📉 Top Loser: ${data.top_loser.symbol} (${(data.top_loser.daily_return * 100).toFixed(2)}%)`;
+}
 
 loadCompanies();
+loadInsights();

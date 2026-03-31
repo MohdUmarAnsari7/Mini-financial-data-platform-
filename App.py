@@ -12,7 +12,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-companies = ["INFY.NS", "TCS.NS", "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "AAPIN.NS", "HINDUNILVR.NS", "SBIN.NS", "KOTAKBANK.NS", "LT.NS"]
+companies = ["AAPL", "MSFT", "GOOGL", "INFY", "TCS"]
+
 @app.get("/companies")
 def get_companies():
     return {
@@ -89,7 +90,7 @@ def get_stock_data(symbol, period='1y'):
 
     df['Sentiment Score'] = (df['Close'] - df['MA_7']) / df['MA_7']
 
-    df.dropna(inplace=True)
+    df.fillna(0, inplace=True)
 
     return df
 

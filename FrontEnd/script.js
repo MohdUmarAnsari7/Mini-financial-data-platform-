@@ -29,24 +29,67 @@ async function loadStockData(symbol) {
     }
 
     const data = result.data;
-
-    const labels = data.map(d => d.Date);
+    const labels = data.map(d => new Date(d.Date).toLocaleDateString());
     const prices = data.map(d => d.Close);
+    const ma7 = data.map(d => d.MA_7);
 
-    drawChart(labels, prices);
+    drawChart(labels, prices, ma7);
 }
 
-function drawChart(labels, data) {
-    const ctx = document.getElementById('stockChart').getContext('2d');
-    if (chart) chart.destroy();
+function drawChart(labels, prices, ma7) {
+    const ctx = document.getElementById("stockChart").getContext("2d");
+
+    if (chart) {
+        chart.destroy();
+    }
+
     chart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
             labels: labels,
-            datasets: [{
-                label: 'Closing Price',
-                data: data,
-            }]
+            datasets: [
+                {
+                    label: "Closing Price",
+                    data: prices,
+                    borderColor: "#007bff",
+                    backgroundColor: "rgba(0,123,255,0.1)",
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 1
+                },
+                {
+                    label: "MA 7",
+                    data: ma7,
+                    borderColor: "#ff4d4d",
+                    borderWidth: 2,
+                    tension: 0.3,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                }
+            },
+            interaction: {
+                mode: "nearest",
+                axis: "x",
+                intersect: false
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        maxTicksLimit: 8
+                    }
+                }
+            }
         }
     });
 }

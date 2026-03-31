@@ -94,18 +94,21 @@ def top_movers():
     }
 
 @app.get("/predict/{symbol}")
-def predict_stock(symbol: str):
-    df = cached_stock_data(symbol)
+def predict(symbol: str):
+    try:
+        df = cached_stock_data(symbol)
 
-    if df.empty:
-        return {"error": "Invalid Symbol."}
+        if df.empty:
+            return {"error": "Invalid Symbol."}
 
-    predictions = get_prediction(df)
+        predictions = get_prediction(df)
 
-    return {
-        "symbol": symbol,
-        "predictions": predictions
-    }
+        return {
+            "symbol": symbol,
+            "predictions": predictions
+        }
+    except Exception as e:
+        return {"error": str(e)}
 
 def get_stock_data(symbol, period='1y'):
     df = yf.download(symbol, period=period, interval="1d")

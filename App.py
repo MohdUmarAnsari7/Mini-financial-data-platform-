@@ -3,6 +3,8 @@ import pandas as pd
 from fastapi import FastAPI
 from functools import lru_cache
 from fastapi.middleware.cors import CORSMiddleware
+from sklearn.linear_model import LinearRegression
+import numpy as np
 
 app = FastAPI()
 app.add_middleware(
@@ -63,6 +65,48 @@ def compare_stocks(stock1: str, stock2: str):
 def cached_stock_data(symbol):
     return get_stock_data(symbol)
 
+@app.get("/top-movers")
+def top_movers():
+    results = []
+
+    for stock in companies:
+        df = get_stock_data(stock)
+
+        if df.empty:
+            continue
+
+        latest = df.iloc[-1]
+
+        results.append({
+            "symbol": stock,
+            "daily_return": float(latest["Daily Return"])
+        })
+
+    if not results:
+        return {"error": "No data available"}
+
+    # sort by return
+    sorted_data = sorted(results, key=lambda x: x["daily_return"], reverse=True)
+
+    return {
+        "top_gainer": sorted_data[0],
+        "top_loser": sorted_data[-1]
+    }
+
+@app.get("/predict/{symbol}")
+def predict_stock(symbol: str):
+    df = cached_stock_data(symbol)
+
+    if df.empty:
+        return {"error": "Invalid Symbol."}
+
+    predictions = get_prediction(df)
+
+    return {
+        "symbol": symbol,
+        "predictions": predictions
+    }
+
 def get_stock_data(symbol, period='1y'):
     df = yf.download(symbol, period=period, interval="1d")
 
@@ -109,30 +153,15 @@ def get_correlation(stock1, stock2):
 
     return df['S1_return'].corr(df['S2_return'])
 
-@app.get("/top-movers")
-def top_movers():
-    results = []
+def get_prediction(df,days_ahead=7):
+    df = df.copy()
+    
+    df['index'] = np.arange(len(df))
+    x = df['index']
+    y = df['Close']
 
-    for stock in companies:
-        df = get_stock_data(stock)
-
-        if df.empty:
-            continue
-
-        latest = df.iloc[-1]
-
-        results.append({
-            "symbol": stock,
-            "daily_return": float(latest["Daily Return"])
-        })
-
-    if not results:
-        return {"error": "No data available"}
-
-    # sort by return
-    sorted_data = sorted(results, key=lambda x: x["daily_return"], reverse=True)
-
-    return {
-        "top_gainer": sorted_data[0],
-        "top_loser": sorted_data[-1]
-    }
+    model = LinearRegression()
+    model.fit(x,y)
+    future_idx = np.arange(len(df), len(df) + days_ahead).reshape(-1, 1)
+    predictions = model.predict(future_idx)
+    return predictions.tolist()

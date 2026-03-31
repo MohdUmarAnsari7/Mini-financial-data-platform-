@@ -51,6 +51,7 @@ async function loadStockData(symbol) {
     const ma7 = data.map(d => d.MA_7);
 
     drawChart(labels, prices, ma7);
+    loadPrediction(symbol, labels, prices);
 }
 
 function drawChart(labels, prices, ma7) {
@@ -118,6 +119,7 @@ function onFilterChange() {
 }
 
 async function compareStocks() {
+    currentSymbol = null;
     const stock1 = document.getElementById("stock1").value;
     const stock2 = document.getElementById("stock2").value;
 
@@ -183,5 +185,26 @@ async function loadInsights() {
         `📉 Top Loser: ${data.top_loser.symbol} (${(data.top_loser.daily_return * 100).toFixed(2)}%)`;
 }
 
+async function loadPrediction(symbol, labels, prices, ma7) {
+    const res = await fetch(`http://127.0.0.1:8000/predict/${symbol}`);
+    const result = await res.json();
+
+    if (result.error) return;
+
+    const preds = result.prediction;
+
+    const lastDate = new Date(labels[labels.length - 1]);
+    const futureLabels = [];
+
+    for (let i = 1; i <= preds.length; i++) {
+        const d = new Date(lastDate);
+        d.setDate(d.getDate() + i);
+        futureLabels.push(d.toLocaleDateString());
+    }
+
+    const newLabels = [...labels, ...futureLabels];
+
+    drawChart(newLabels, prices, ma7, preds);
+}
 loadCompanies();
 loadInsights();

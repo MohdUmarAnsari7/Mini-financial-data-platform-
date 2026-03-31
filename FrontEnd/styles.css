@@ -1,0 +1,36 @@
+body {
+    font-family: Arial;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 20%;
+    background: #f4f4f4;
+    padding: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    background: #ddd;
+    margin-bottom: 5px;
+}
+
+.sidebar li:hover {
+    background: #bbb;
+}
+
+.main {
+    width: 80%;
+    padding: 20px;
+}

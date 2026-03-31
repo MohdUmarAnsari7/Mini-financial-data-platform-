@@ -1,22 +1,95 @@
 import yfinance as yf
 import pandas as pd
+from fastapi import FastAPI
+from functools import lru_cache
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+companies = ["INFY.NS", "TCS.NS", "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "AAPIN.NS", "HINDUNILVR.NS", "SBIN.NS", "KOTAKBANK.NS", "LT.NS"]
+@app.get("/companies")
+def get_companies():
+    return {
+        "companies": companies
+    }
+
+@app.get("/stock_data/{symbol}")
+def get_stock(symbol: str, days: int = 30):
+    df = cached_stock_data(symbol)
+
+    if df.empty:
+        return {"error": "No data found."}
+
+    df = df.tail(days)
+
+    return {
+        "symbol": symbol,
+        "data": df.to_dict(orient='records')
+    }
+
+@app.get("/summary/{symbol}")
+def get_summary(symbol: str):
+    df = cached_stock_data(symbol)
+
+    if df.empty:
+        return {"error": "Invalid Symbol."}
+    
+    return {
+        "52_week_high": float(df['52_week_high'].max()),
+        "52_week_low": float(df['52_week_low'].min()),
+        "average_close": float(df['Close'].mean())
+    }
+
+@app.get("/compare")
+def compare_stocks(stock1: str, stock2: str):
+    try:
+        correlation = get_correlation(stock1, stock2)
+        return {
+            "stock1": stock1,
+            "stock2": stock2,
+            "correlation": float(correlation)
+            }
+    except Exception as e:
+        return {"error": str(e)}
+
+@lru_cache(maxsize=10)
+def cached_stock_data(symbol):
+    return get_stock_data(symbol)
 
 def get_stock_data(symbol, period='1y'):
-    df = yf.download(symbol, period=period)
+    df = yf.download(symbol, period=period, interval="1d")
+
+    if df.empty:
+        print("Retrying fetch...")
+        df = yf.download(symbol, period=period, interval="1d")
+
+    if df.empty:
+        return df
+
     df.reset_index(inplace=True)
-    df.dropna(inplace=True)
+
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
+
     df['Date'] = pd.to_datetime(df['Date'])
-    
+
     df['Daily Return'] = (df['Close'] - df['Open']) / df['Open']
-    
     df['MA_7'] = df['Close'].rolling(window=7).mean()
-    
-    df['52_Week_high'] = df['Close'].rolling(window=252).max()
-    df['52_Week_low'] = df['Close'].rolling(window=252).min()
-    
+
+    df['52_week_high'] = df['Close'].rolling(window=252).max()
+    df['52_week_low'] = df['Close'].rolling(window=252).min()
+
     df['Volatility'] = df['Daily Return'].rolling(window=7).std()
-    
-    df['Sentiment Score'] = (df['Close'].squeeze() - df['MA_7'].squeeze()) / df['MA_7'].squeeze()
+
+    df['Sentiment Score'] = (df['Close'] - df['MA_7']) / df['MA_7']
+
+    df.dropna(inplace=True)
 
     return df
 
@@ -35,4 +108,3 @@ def get_correlation(stock1, stock2):
 
     return df['S1_return'].corr(df['S2_return'])
 
-print(get_stock_data("INFY.NS").tail())

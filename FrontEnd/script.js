@@ -1,4 +1,6 @@
 let chart;
+let currentSymbol = null;
+
 async function loadCompanies() {
     const res = await fetch(`http://localhost:8000/companies`);
     const data = await res.json();
@@ -7,18 +9,18 @@ async function loadCompanies() {
     data.companies.forEach(company => {
         const li = document.createElement('li');
         li.innerText = company;
-        li.onclick = () =>{
-            console.log(`Clicked on ${company}`);
+        li.onclick = () => {
+            currentSymbol = company;
             loadStockData(company);
-        }
+        };
         list.appendChild(li);
     });
 }
 
 async function loadStockData(symbol) {
     console.log("Function called with:", symbol);
-
-    const res = await fetch(`http://127.0.0.1:8000/stock_data/${symbol}`);
+    const days = document.getElementById("daysFilter").value;
+    const res = await fetch(`http://127.0.0.1:8000/stock_data/${symbol}?days=${days}`);
     const result = await res.json();
 
     console.log(result);
@@ -93,4 +95,13 @@ function drawChart(labels, prices, ma7) {
         }
     });
 }
+
+function onFilterChange() {
+    if (currentSymbol) {
+        loadStockData(currentSymbol);
+    }
+}
+
+
+
 loadCompanies();

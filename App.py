@@ -16,6 +16,8 @@ def get_stock_data(symbol, period='1y'):
     
     df['Volatility'] = df['Daily Return'].rolling(window=7).std()
     
+    df['Sentiment Score'] = (df['Close'].squeeze() - df['MA_7'].squeeze()) / df['MA_7'].squeeze()
+
     return df
 
 def get_correlation(stock1, stock2):

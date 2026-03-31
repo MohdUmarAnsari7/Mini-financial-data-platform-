@@ -12,7 +12,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-companies = ["AAPL", "MSFT", "GOOGL", "INFY", "TCS"]
+companies = ["AAPL", "MSFT", "GOOGL", "INFY"]
 
 @app.get("/companies")
 def get_companies():

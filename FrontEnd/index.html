@@ -14,20 +14,12 @@
             <h2>Companies</h2>
             <ul id="companyList"></ul>
         </div>
-
-        <!-- Main Content -->
         <div class="main">
-
-            <!-- Controls -->
             <div class="controls">
-
-                <!-- Filter -->
                 <select id="daysFilter" onchange="onFilterChange()">
                     <option value="30">Last 30 Days</option>
                     <option value="90">Last 90 Days</option>
                 </select>
-
-                <!-- Compare -->
                 <div class="compare-box">
                     <select id="stock1"></select>
                     <select id="stock2"></select>
@@ -40,11 +32,9 @@
                 <div id="gainer" class="card"></div>
                 <div id="loser" class="card"></div>
             </div>
-            
-            <!-- Title -->
+
             <h2 id="title">Select a Company</h2>
 
-            <!-- Chart -->
             <canvas id="stockChart"></canvas>
 
         </div>

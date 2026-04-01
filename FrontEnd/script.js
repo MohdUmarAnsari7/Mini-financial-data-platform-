@@ -62,7 +62,7 @@ function drawChart(labels, prices, ma7, preds = []) {
     const extendedPrices = [...prices, ...Array(preds.length).fill(null)];
     const extendedMA7 = [...ma7, ...Array(preds.length).fill(null)];
     const predictionData = [...Array(prices.length).fill(null), ...preds];
-    
+
     chart = new Chart(ctx, {
         type: "line",
         data: {
@@ -74,7 +74,7 @@ function drawChart(labels, prices, ma7, preds = []) {
                     borderColor: "#007bff",
                     borderWidth: 2,
                     tension: 0.3,
-                    pointRadius: 1
+                    pointRadius: 2
                 },
                 {
                     label: "MA 7",
@@ -82,7 +82,7 @@ function drawChart(labels, prices, ma7, preds = []) {
                     borderColor: "#ff4d4d",
                     borderWidth: 2,
                     tension: 0.3,
-                    pointRadius: 0
+                    pointRadius: 2
                 },
                 {
                     label: "Prediction",
@@ -92,9 +92,43 @@ function drawChart(labels, prices, ma7, preds = []) {
                     borderWidth: 4,
                     spanGaps: true,
                     tension: 0.3,
-                    pointRadius: 2
-                }
+                    pointRadius: 2,
+                },
             ]
+        },
+
+        options: {
+            responsive: true,
+
+            interaction: {
+                mode: "index",
+                intersect: false,
+                axis: "x"
+            },
+
+            plugins: {
+                tooltip: {
+                    mode: "index",
+                    intersect: false
+                },
+                legend: {
+                    display: true,
+                    labels: {
+                        usePointStyle: true
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    ticks: {
+                        maxTicksLimit: 8
+                    }
+                },
+                y: {
+                    beginAtZero: false
+                }
+            }
         }
     });
 }

@@ -1,4 +1,4 @@
-# 📊 Stock Data Dashboard
+# 📊 mini financial data platform 
 
 A full-stack stock analytics dashboard that provides real-time stock insights, comparison tools, and basic price predictions using machine learning.
 

@@ -1,9 +1,9 @@
 let chart;
 let currentSymbol = null;
-const BASE_URL = "https://mini-financial-data-platform-pog4.onrender.com/"
+const BASE_URL = "https://mini-financial-data-platform-1-87ug.onrender.com"
 
 async function loadCompanies() {
-    const res = await fetch("http://127.0.0.1:8000/companies");
+    const res = await fetch(`${BASE_URL}/companies`);
     const data = await res.json();
 
     const list = document.getElementById("companyList");
@@ -36,7 +36,7 @@ async function loadCompanies() {
 async function loadStockData(symbol) {
     const days = document.getElementById("daysFilter").value;
 
-    const res = await fetch(`http://127.0.0.1:8000/stock_data/${symbol}?days=${days}`);
+    const res = await fetch(`${BASE_URL}/stock_data/${symbol}?days=${days}`);
     const result = await res.json();
 
     if (result.error) {
@@ -145,8 +145,8 @@ async function compareStocks() {
     const stock1 = document.getElementById("stock1").value;
     const stock2 = document.getElementById("stock2").value;
 
-    const res1 = await fetch(`http://127.0.0.1:8000/stock_data/${stock1}`);
-    const res2 = await fetch(`http://127.0.0.1:8000/stock_data/${stock2}`);
+    const res1 = await fetch(`${BASE_URL}/stock_data/${stock1}`);
+    const res2 = await fetch(`${BASE_URL}/stock_data/${stock2}`);
 
     const data1 = await res1.json();
     const data2 = await res2.json();
@@ -195,7 +195,7 @@ function drawCompareChart(labels, data1, data2, s1, s2) {
 }
 
 async function loadInsights() {
-    const res = await fetch("http://127.0.0.1:8000/top-movers");
+    const res = await fetch(`${BASE_URL}/top-movers`);
     const data = await res.json();
 
     if (data.error) return;
@@ -209,7 +209,7 @@ async function loadInsights() {
 
 async function loadPrediction(symbol, labels, prices, ma7) {
     console.log(`Loading predictions for ${symbol}...`);
-    const res = await fetch(`http://127.0.0.1:8000/predict/${symbol}`);
+    const res = await fetch(`${BASE_URL}/predict/${symbol}`);
     const result = await res.json();
     console.log("Prediction result:", result.predictions);
     if (result.error) return;

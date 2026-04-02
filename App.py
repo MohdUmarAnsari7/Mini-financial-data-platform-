@@ -3,9 +3,8 @@ import pandas as pd
 from fastapi import FastAPI
 from functools import lru_cache
 from fastapi.middleware.cors import CORSMiddleware
-from sklearn.linear_model import LinearRegression
-import numpy as np
 
+print("App starting...")
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -157,6 +156,9 @@ def get_correlation(stock1, stock2):
     return df['S1_return'].corr(df['S2_return'])
 
 def get_prediction(df,days_ahead=7):
+    print("Prediction function called")
+    from sklearn.linear_model import LinearRegression
+    import numpy as np
     df = df.copy()
     
     df['index'] = np.arange(len(df))

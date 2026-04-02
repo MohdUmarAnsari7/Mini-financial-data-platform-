@@ -103,7 +103,7 @@ def predict(symbol: str):
 
         return {
             "symbol": symbol,
-            "predictions": predictions
+            "prediction": predictions
         }
     except Exception as e:
         return {"error": str(e)}

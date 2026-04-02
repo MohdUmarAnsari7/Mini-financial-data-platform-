@@ -4,7 +4,6 @@ from fastapi import FastAPI
 from functools import lru_cache
 from fastapi.middleware.cors import CORSMiddleware
 
-print("App starting...")
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -162,7 +161,7 @@ def get_prediction(df,days_ahead=7):
     df = df.copy()
     
     df['index'] = np.arange(len(df))
-    x = df['index']
+    x = df[['index']]
     y = df['Close']
 
     model = LinearRegression()

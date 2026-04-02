@@ -1,4 +1,3 @@
-import yfinance as yf
 import pandas as pd
 from fastapi import FastAPI
 from functools import lru_cache
@@ -109,6 +108,7 @@ def predict(symbol: str):
         return {"error": str(e)}
 
 def get_stock_data(symbol, period='1y'):
+    import yfinance as yf
     df = yf.download(symbol, period=period, interval="1d")
 
     if df.empty:
@@ -140,6 +140,7 @@ def get_stock_data(symbol, period='1y'):
     return df
 
 def get_correlation(stock1, stock2):
+    import yfinance as yf
     df1 = yf.download(stock1, period="1y")
     df2 = yf.download(stock2, period="1y")
 

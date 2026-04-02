@@ -42,7 +42,9 @@ project-root/
 │
 ├── app.py
 ├── requirements.txt
-│
+├── runtime.txt
+├── Short video.mp4
+|
 ├── frontend/
 │   ├── index.html
 │   ├── styles.css

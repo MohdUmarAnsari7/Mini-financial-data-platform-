@@ -1,6 +1,6 @@
 let chart;
 let currentSymbol = null;
-const BASE_URL = "https://mini-financial-data-platform-2.onrender.com";
+const BASE_URL = "http://127.0.0.1:8000";
 
 async function loadCompanies() {
     const res = await fetch(`${BASE_URL}/companies`);
